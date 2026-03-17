@@ -26,6 +26,10 @@ private:
   DHT _dht;
   uint8_t _pin;
   uint8_t _type;
+  unsigned long _lastReadTime;
+  EnvData _lastData;
+  bool _hasLastValid;
+  bool isSanityOk(float temperature, float humidity) const;
 };
 
 #endif // ENVIRONMENT_SENSOR_H

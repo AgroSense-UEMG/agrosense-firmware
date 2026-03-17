@@ -50,10 +50,20 @@ void loop() {
 
 ### 3) O que a classe faz
 - `EnvironmentSensor::EnvData` tem `temperature`, `humidity` e `valid`.
-- `readData()` usa `isnan()` para detectar falhas de leitura.
-- Se houver falha, `valid = false` e um erro é impresso no Serial.
+- `readData()` garante leitura DHT11 no mínimo a cada 2000ms (não bloqueante).
+- Se houver `NaN`, o sensor é reinicializado suavemente e `valid` é `false`.
+- Implementa verificação de sanidade para saltos impossíveis de temperatura/umidade.
+- Logs de depuração são emitidos no Serial (`Lendo DHT11...`, `Aguardando intervalo...`, `Erro de sanidade...`).
 
-### 4) Dependências PlatformIO
+### 4) Build / dependências
+No `platformio.ini`:
+```ini
+lib_deps =
+  bblanchon/ArduinoJson @ ^7.0.0
+  adafruit/DHT sensor library @ ^1.4.6
+  adafruit/Adafruit Unified Sensor @ ^1.1.14
+```
+
 No `platformio.ini`:
 ```ini
 lib_deps =
