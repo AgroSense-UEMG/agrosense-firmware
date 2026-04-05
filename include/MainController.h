@@ -23,6 +23,8 @@ private:
     // Instancia o sensor do Paulo no pino D4 (GPIO 4) conforme o Pinout
     EnvironmentSensor environmentSensor;
 
+    // SailSensor sailSensor; (aguardando)
+
 public:
     // Construtor: Inicializa as variáveis básicas
     MainController();
