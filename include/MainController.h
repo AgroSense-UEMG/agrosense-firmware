@@ -1,6 +1,7 @@
 #ifndef MAIN_CONTROLLER_H
 #define MAIN_CONTROLLER_H
 
+#include "SoilSensor.h"
 #include <Arduino.h>
 #include "EnvironmentSensor.h"
 
@@ -23,7 +24,7 @@ private:
     // Instancia o sensor do Paulo no pino D4 (GPIO 4) conforme o Pinout
     EnvironmentSensor environmentSensor;
 
-    // SailSensor sailSensor; (aguardando)
+    SoilSensor soilSensor;
 
 public:
     // Construtor: Inicializa as variáveis básicas

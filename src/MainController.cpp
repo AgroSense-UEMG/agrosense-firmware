@@ -13,6 +13,7 @@ void MainController::setup() {
     Serial.begin(115200);
     pinMode(2, OUTPUT); // Pino do LED_PIN definido pelo Paulo
     environmentSensor.begin(); // Inicializa o hardware do sensor ambiente
+    soilSensor.begin();
     Serial.println("AgroSense Node-Six: Boot Inicializado!");
 }
 
