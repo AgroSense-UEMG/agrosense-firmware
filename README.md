@@ -65,24 +65,25 @@ lib_deps =
 ```
 
 ### 5) Wi-Fi implementado
-O `src/main.cpp` agora inclui uma camada básica de conexão Wi-Fi para ESP32 com:
-- modo Station (`WiFi.mode(WIFI_STA)`)
-- reconexão automática em caso de queda
-- limite de tentativas (`WIFI_MAX_RECONNECT_ATTEMPTS`)
-- backoff entre tentativas (`WIFI_RECONNECT_BACKOFF_MS`)
-- logs detalhados no `Serial Monitor`
-- eventos do sistema via `WiFi.onEvent()`
+O firmware agora inclui um `WiFiManager` com captive portal para ESP32.
+O dispositivo tenta conectar automaticamente com as credenciais armazenadas e, se falhar ou se não houver configuração, inicia um ponto de acesso chamado `AgroSense-Setup`.
+
+Funcionalidades:
+- conexão em modo Station quando credenciais estão salvas
+- reconexão automática com limite de tentativas
+- backoff entre tentativas para não travar o loop
+- portal cautivo com DNS redirecionando para a página de configuração
+- formulário para informar SSID, senha e token do usuário
+- persistência via NVS/Preferences para salvar credenciais e token
 
 Para testar:
-1. Atualize `src/main.cpp` com seu `WIFI_SSID` e `WIFI_PASSWORD`.
-2. Compile e faça upload para o ESP32.
-3. Abra o Serial Monitor em `115200`.
-4. Observe as mensagens:
-   - `Station iniciado.`
-   - `Conectado ao AP.`
-   - `IP obtido:`
-   - `Desconectado do AP.`
-   - `Tentativa de reconexão X/Y...`
+1. Compile e faça upload para o ESP32.
+2. Abra o Serial Monitor em `115200`.
+3. Se o dispositivo não tiver credenciais válidas ou não conseguir se conectar, o AP `AgroSense-Setup` será iniciado.
+4. Conecte um celular ou notebook em `AgroSense-Setup`.
+5. Abra qualquer endereço no navegador; você será redirecionado para o portal.
+6. Preencha o SSID, a senha da sua rede e, opcionalmente, o token do usuário.
+7. Salve; o dispositivo reiniciará e tentará se conectar à rede configurada.
 
-Se quiser testar falha de conexão, desconecte o roteador ou altere a senha e veja o ESP32 reconectar automaticamente.
+Para validar o funcionamento do captive portal, desconecte o roteador ou configure uma senha errada e observe o ESP32 abrir novamente o AP de configuração.
 
