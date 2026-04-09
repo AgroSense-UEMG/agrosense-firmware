@@ -64,11 +64,25 @@ lib_deps =
   adafruit/Adafruit Unified Sensor @ ^1.1.14
 ```
 
-No `platformio.ini`:
-```ini
-lib_deps =
-  bblanchon/ArduinoJson @ ^7.0.0
-  adafruit/DHT sensor library @ ^1.4.6
-  adafruit/Adafruit Unified Sensor @ ^1.1.14
-```
+### 5) Wi-Fi implementado
+O `src/main.cpp` agora inclui uma camada básica de conexão Wi-Fi para ESP32 com:
+- modo Station (`WiFi.mode(WIFI_STA)`)
+- reconexão automática em caso de queda
+- limite de tentativas (`WIFI_MAX_RECONNECT_ATTEMPTS`)
+- backoff entre tentativas (`WIFI_RECONNECT_BACKOFF_MS`)
+- logs detalhados no `Serial Monitor`
+- eventos do sistema via `WiFi.onEvent()`
+
+Para testar:
+1. Atualize `src/main.cpp` com seu `WIFI_SSID` e `WIFI_PASSWORD`.
+2. Compile e faça upload para o ESP32.
+3. Abra o Serial Monitor em `115200`.
+4. Observe as mensagens:
+   - `Station iniciado.`
+   - `Conectado ao AP.`
+   - `IP obtido:`
+   - `Desconectado do AP.`
+   - `Tentativa de reconexão X/Y...`
+
+Se quiser testar falha de conexão, desconecte o roteador ou altere a senha e veja o ESP32 reconectar automaticamente.
 
