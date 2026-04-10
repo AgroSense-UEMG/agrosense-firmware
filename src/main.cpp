@@ -1,12 +1,24 @@
+
 #include <Arduino.h>
 #include "MainController.h"
+#include "WiFiManager.h" 
 
-MainController controller; // Cria o objeto da classe
+// Instancia os dois "cérebros" separadamente
+MainController controller;
+WiFiManager wifiManager;
 
 void setup() {
-    controller.setup(); // Chama a configuração uma única vez
+    Serial.begin(115200);
+    
+    // 1. Inicia o Wi-Fi e o Portal Cativo 
+    wifiManager.begin(); 
+    
+    // 2. Inicia os sensores e a máquina de estados 
+    controller.setup(); 
 }
 
 void loop() {
-    controller.run(); // Fica rodando a máquina de estados repetidamente
+    // Roda as duas tarefas ao mesmo tempo sem bloquear o processador!
+    wifiManager.loop(); // Mantém o Wi-Fi vivo
+    controller.run();   // Lê os sensores e pisca o LED
 }
