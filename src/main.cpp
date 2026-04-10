@@ -1,42 +1,24 @@
+
 #include <Arduino.h>
-#include "WiFiManager.h"
-#include "EnvironmentSensor.h"
+#include "MainController.h"
+#include "WiFiManager.h" 
 
-#define LED_PIN 2
-
-unsigned long previousMillis = 0;
-int ledState = LOW;
-EnvironmentSensor environmentSensor(4, DHT11);
+// Instancia os dois "cérebros" separadamente
+MainController controller;
 WiFiManager wifiManager;
 
 void setup() {
-  Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
-  environmentSensor.begin();
-  Serial.println("AgroSense Node-Six: Boot Inicializado! 🚀");
-  wifiManager.begin();
+    Serial.begin(115200);
+    
+    // 1. Inicia o Wi-Fi e o Portal Cativo 
+    wifiManager.begin(); 
+    
+    // 2. Inicia os sensores e a máquina de estados 
+    controller.setup(); 
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-  wifiManager.loop();
-
-  if (currentMillis - previousMillis >= 2000UL) {
-    previousMillis = currentMillis;
-    ledState = (ledState == LOW ? HIGH : LOW);
-    digitalWrite(LED_PIN, ledState);
-    Serial.print("LED ");
-    Serial.println(ledState == HIGH ? "ON" : "OFF");
-
-    EnvironmentSensor::EnvData reading = environmentSensor.readData();
-    if (reading.valid) {
-      Serial.print("Temperatura: ");
-      Serial.print(reading.temperature, 1);
-      Serial.print(" C, Umidade: ");
-      Serial.print(reading.humidity, 1);
-      Serial.println(" %");
-    } else {
-      Serial.println("Leitura ambiente inválida.");
-    }
-  }
+    // Roda as duas tarefas ao mesmo tempo sem bloquear o processador!
+    wifiManager.loop(); // Mantém o Wi-Fi vivo
+    controller.run();   // Lê os sensores e pisca o LED
 }
