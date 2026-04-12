@@ -26,14 +26,10 @@ private:
     // SailSensor sailSensor; (aguardando)
 
 public:
-    // Construtor: Inicializa as variáveis básicas
-    MainController();
-    
-    // Setup: Configura os pinos e inicia os sensores
-    void setup();
-    
-    // Run: A função que roda infinitamente no loop principal
-    void run();
+    MainController();           // Construtor: Inicializa as variáveis básicas
+    void setup();               // Setup: Configura os pinos e inicia os sensores
+    void run();                 // Run: A função que roda infinitamente no loop principal
+    String getManifest();       // Função para gerar a identidade digital
 };
 
 #endif
