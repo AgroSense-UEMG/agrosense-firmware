@@ -96,20 +96,26 @@ String MainController::getManifest() {
 
     // Sensor de Temperatura (DHT)
     JsonObject temp = components.add<JsonObject>();
-    temp["id"] = "dht_temp";
-    temp["unit"] = "°C";
+    temp["id_componente"] = "dht_temp";
+    temp["nome_exibicao"] = "Temperatura do Ar";
+    temp["tipo"] = "sensor";
+    temp["unidade_medida"] = "°C";
 
     // Sensor de Umidade (DHT)
     JsonObject hum = components.add<JsonObject>();
-    hum["id"] = "dht_hum";
-    hum["unit"] = "%";
+    hum["id_componente"] = "dht_hum";
+    hum["nome_exibicao"] = "Umidade do Ar";
+    hum["tipo"] = "sensor";
+    hum["unidade_medida"] = "%";
 
     // Mapeamento dos 6 sensores de solo
     for (int i = 1; i <= 6; i++) {
         JsonObject soil = components.add<JsonObject>();
-        // Cria IDs dinâmicos: soil_1, soil_2...
-        soil["id"] = "soil_" + String(i);
-        soil["unit"] = "%";
+        // IDs e Nomes dinâmicos: soil_1, Umidade Solo 1...
+        soil["id_componente"] = "soil_" + String(i);
+        soil["nome_exibicao"] = "Umidade Solo " + String(i);
+        soil["tipo"] = "sensor";
+        soil["unidade_medida"] = "%";
     }
 
     // Transforma o objeto JSON em uma String para envio
