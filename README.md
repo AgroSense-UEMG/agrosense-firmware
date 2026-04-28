@@ -64,11 +64,26 @@ lib_deps =
   adafruit/Adafruit Unified Sensor @ ^1.1.14
 ```
 
-No `platformio.ini`:
-```ini
-lib_deps =
-  bblanchon/ArduinoJson @ ^7.0.0
-  adafruit/DHT sensor library @ ^1.4.6
-  adafruit/Adafruit Unified Sensor @ ^1.1.14
-```
+### 5) Wi-Fi implementado
+O firmware agora inclui um `WiFiManager` com captive portal para ESP32.
+O dispositivo tenta conectar automaticamente com as credenciais armazenadas e, se falhar ou se não houver configuração, inicia um ponto de acesso chamado `AgroSense-Setup`.
+
+Funcionalidades:
+- conexão em modo Station quando credenciais estão salvas
+- reconexão automática com limite de tentativas
+- backoff entre tentativas para não travar o loop
+- portal cautivo com DNS redirecionando para a página de configuração
+- formulário para informar SSID, senha e token do usuário
+- persistência via NVS/Preferences para salvar credenciais e token
+
+Para testar:
+1. Compile e faça upload para o ESP32.
+2. Abra o Serial Monitor em `115200`.
+3. Se o dispositivo não tiver credenciais válidas ou não conseguir se conectar, o AP `AgroSense-Setup` será iniciado.
+4. Conecte um celular ou notebook em `AgroSense-Setup`.
+5. Abra qualquer endereço no navegador; você será redirecionado para o portal.
+6. Preencha o SSID, a senha da sua rede e, opcionalmente, o token do usuário.
+7. Salve; o dispositivo reiniciará e tentará se conectar à rede configurada.
+
+Para validar o funcionamento do captive portal, desconecte o roteador ou configure uma senha errada e observe o ESP32 abrir novamente o AP de configuração.
 

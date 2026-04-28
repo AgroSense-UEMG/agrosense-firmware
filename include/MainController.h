@@ -1,6 +1,7 @@
 #ifndef MAIN_CONTROLLER_H
 #define MAIN_CONTROLLER_H
 
+#include "SoilSensor.h"
 #include <Arduino.h>
 #include "EnvironmentSensor.h"
 
@@ -23,17 +24,13 @@ private:
     // Instancia o sensor do Paulo no pino D4 (GPIO 4) conforme o Pinout
     EnvironmentSensor environmentSensor;
 
-    // SailSensor sailSensor; (aguardando)
+    SoilSensor soilSensor;
 
 public:
-    // Construtor: Inicializa as variáveis básicas
-    MainController();
-    
-    // Setup: Configura os pinos e inicia os sensores
-    void setup();
-    
-    // Run: A função que roda infinitamente no loop principal
-    void run();
+    MainController();           // Construtor: Inicializa as variáveis básicas
+    void setup();               // Setup: Configura os pinos e inicia os sensores
+    void run();                 // Run: A função que roda infinitamente no loop principal
+    String getManifest();       // Função para gerar a identidade digital
 };
 
 #endif
