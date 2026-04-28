@@ -20,6 +20,7 @@ void MainController::setup() {
     Serial.begin(115200);
     pinMode(LED_PIN, OUTPUT); // Pino do LED_PIN definido pelo Paulo
     environmentSensor.begin(); // Inicializa o hardware do sensor ambiente
+    soilSensor.begin();
     Serial.println("AgroSense Node-Six: Boot Inicializado!");
 }
 
@@ -34,7 +35,7 @@ void MainController::run() {
             break;
         
         case CONNECTING:
-            if (WiFi.status() == WL_CONNECTED){  
+            if (WiFi.status() == WL_CONNECTED){  // O WiFi.status() é uma função interna do ESP32 que diz se a rede está OK
                 Serial.println("Wi-Fi Conectado! Indo para Handshake...");
                 currentState = HANDSHAKE;
             }
@@ -72,7 +73,7 @@ void MainController::run() {
         }
 
         case WORKING: {
-            // Verifica se já passaram os 2 segundos (ou o intervalo definido)
+            // Verifica se já passaram 2 segundos desde a última vez
             if (currentMillis - previousMillis >= interval) {
                 previousMillis = currentMillis; 
 
@@ -99,12 +100,12 @@ void MainController::run() {
                         
                         // Objeto de Temperatura
                         JsonObject t = readings.add<JsonObject>();
-                        t["id_componente"] = "dht11_temp";
+                        t["id_componente"] = "dht_temp";
                         t["valor"] = reading.temperature;
 
                         // Objeto de Umidade
                         JsonObject h = readings.add<JsonObject>();
-                        h["id_componente"] = "dht11_hum";
+                        h["id_componente"] = "dht_hum";
                         h["valor"] = reading.humidity;
 
                         // (A leitura dos sensores de solo será acoplada aqui futuramente)
@@ -143,36 +144,43 @@ void MainController::run() {
 }
 
 String MainController::getManifest() {
+    // Cria um documento JSON (estimamos 1024 bytes de memória)
     JsonDocument doc;
 
+    // Captura o MAC Address real do ESP32 para o hardware_id
     doc["hardware_id"] = WiFi.macAddress();
     doc["model"] = "Node-Six";
 
+    // Cria a lista de componentes (sensores)
     JsonArray components = doc["components"].to<JsonArray>();
 
-    // JÁ APLICANDO A CORREÇÃO DE CONTRATO (Especificação de Software pg 39/40)
+    // Sensor de Temperatura (DHT)
     JsonObject temp = components.add<JsonObject>();
-    temp["id_componente"] = "dht11_temp";
-    temp["tipo"] = "sensor";
+    temp["id_componente"] = "dht_temp";
     temp["nome_exibicao"] = "Temperatura do Ar";
+    temp["tipo"] = "sensor";
     temp["unidade_medida"] = "°C";
 
+    // Sensor de Umidade (DHT)
     JsonObject hum = components.add<JsonObject>();
-    hum["id_componente"] = "dht11_hum";
-    hum["tipo"] = "sensor";
+    hum["id_componente"] = "dht_hum";
     hum["nome_exibicao"] = "Umidade do Ar";
+    hum["tipo"] = "sensor";
     hum["unidade_medida"] = "%";
 
+    // Mapeamento dos 6 sensores de solo
     for (int i = 1; i <= 6; i++) {
         JsonObject soil = components.add<JsonObject>();
+        // IDs e Nomes dinâmicos: soil_1, Umidade Solo 1...
         soil["id_componente"] = "soil_" + String(i);
-        soil["tipo"] = "sensor";
         soil["nome_exibicao"] = "Umidade Solo " + String(i);
+        soil["tipo"] = "sensor";
         soil["unidade_medida"] = "%";
     }
 
+    // Transforma o objeto JSON em uma String para envio
     String output;
     serializeJson(doc, output);
     
-    return output; 
+    return output; // Retorna o JSON pronto para o HTTP POST
 }
